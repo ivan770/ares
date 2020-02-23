@@ -1,15 +1,26 @@
 use crate::key::cipher_from_raw_key;
 use crate::key::raw::RawKey;
 use crate::key::Aes128Cbc;
-use dialoguer::PasswordInput;
 use std::convert::TryInto;
 use std::array::TryFromSliceError;
+use std::fs::read;
 
+#[cfg(not(test))]
 fn request_raw_key(iv: [u8; 16]) -> Result<RawKey, TryFromSliceError>
 {
-    let key = PasswordInput::new().with_prompt("Encryption key").interact().unwrap();
+    let key = dialoguer::PasswordInput::new().with_prompt("Encryption key").interact().unwrap();
     Ok(RawKey {
         key: key.as_bytes().try_into()?,
+        iv: iv
+    })
+}
+
+#[cfg(test)]
+fn request_raw_key(iv: [u8; 16]) -> Result<RawKey, TryFromSliceError>
+{
+    let key = read("key.txt").unwrap();
+    Ok(RawKey {
+        key: key.as_slice().try_into()?,
         iv: iv
     })
 }

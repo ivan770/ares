@@ -1,16 +1,22 @@
 name: Rust
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build-linux:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build
-      run: cargo build --release --verbose
     - name: Run tests
       run: cargo test --verbose
+    - name: Build
+      run: cargo build --release --verbose
     - uses: actions/upload-artifact@v1
       with:
         name: linux
@@ -19,10 +25,10 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build
-      run: cargo build --release --verbose
     - name: Run tests
       run: cargo test --verbose
+    - name: Build
+      run: cargo build --release --verbose
     - uses: actions/upload-artifact@v1
       with:
         name: mac
