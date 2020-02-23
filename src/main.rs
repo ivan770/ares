@@ -65,3 +65,54 @@ fn main() {
         _ => println!("Command not found. Use --help flag to open help"),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::fs::{File, read, remove_file};
+    use std::path::Path;
+    use std::io::Write;
+    use super::{encrypt, decrypt};
+
+    const KEY: &'static str = "key.txt";
+    const UNENCRYPTED: &'static str = "unencrypted.txt";
+    const ENCRYPTED: &'static str = "encrypted.ares";
+    const DECRYPTED: &'static str = "decrypted.txt";
+
+    fn delete_files()
+    {
+        remove_file(KEY).ok();
+        remove_file(UNENCRYPTED).ok();
+        remove_file(ENCRYPTED).ok();
+        remove_file(DECRYPTED).ok();
+    }
+
+    #[test]
+    fn full_chain_test()
+    {
+        delete_files();
+
+        let mut msg_file = File::create(UNENCRYPTED).unwrap();
+        let mut key_file = File::create(KEY).unwrap();
+
+        let msg = "This message is super secret.";
+        msg_file.write_all(msg.as_bytes()).unwrap();
+
+        let key = "supersecretkey12";
+        key_file.write_all(key.as_bytes()).unwrap();
+
+        encrypt(UNENCRYPTED, ENCRYPTED);
+        decrypt(ENCRYPTED, DECRYPTED);
+        assert_eq!(msg.as_bytes(), read(DECRYPTED).unwrap().as_slice());
+
+        let swap_key = "supersecretkey13";
+        remove_file(DECRYPTED).unwrap();
+
+        key_file = File::create(KEY).unwrap();
+        key_file.write_all(swap_key.as_bytes()).unwrap();
+        decrypt(ENCRYPTED, DECRYPTED);
+
+        assert_eq!(Path::new(DECRYPTED).exists(), false);
+
+        delete_files();
+    }
+}
