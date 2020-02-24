@@ -12,6 +12,9 @@ plugs:
   disk:
     interface: home
 
+architectures:
+  - build-on: amd64
+
 parts:
   ares:
     plugin: rust
