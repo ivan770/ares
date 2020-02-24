@@ -1,14 +1,12 @@
 extern crate block_modes;
 
-mod key;
+mod cipher;
 mod file;
 mod help;
-mod encrypt;
-mod decrypt;
+mod actions;
 mod encrypted_file;
 
-use encrypt::encrypt;
-use decrypt::decrypt;
+use actions::*;
 use clap::{App, Arg};
 
 const VERSION: &'static str = "v. 1.1";
@@ -55,11 +53,11 @@ fn main() {
     match matches.subcommand_name() {
         Some("encrypt") => {
             let submatches = matches.subcommand_matches("encrypt").unwrap();
-            encrypt(submatches.value_of("from").unwrap(), submatches.value_of("to").unwrap());
+            encrypt::encrypt(submatches.value_of("from").unwrap(), submatches.value_of("to").unwrap());
         },
         Some("decrypt") => {
             let submatches = matches.subcommand_matches("decrypt").unwrap();
-            decrypt(submatches.value_of("from").unwrap(), submatches.value_of("to").unwrap());
+            decrypt::decrypt(submatches.value_of("from").unwrap(), submatches.value_of("to").unwrap());
         },
         _ => println!("Command not found. Use --help flag to open help"),
     }
@@ -99,8 +97,8 @@ mod tests {
         let key = "supersecretkey12";
         key_file.write_all(key.as_bytes()).unwrap();
 
-        encrypt(UNENCRYPTED, ENCRYPTED);
-        decrypt(ENCRYPTED, DECRYPTED);
+        encrypt::encrypt(UNENCRYPTED, ENCRYPTED);
+        decrypt::decrypt(ENCRYPTED, DECRYPTED);
         assert_eq!(msg.as_bytes(), read(DECRYPTED).unwrap().as_slice());
 
         let swap_key = "supersecretkey13";
@@ -108,7 +106,7 @@ mod tests {
 
         key_file = File::create(KEY).unwrap();
         key_file.write_all(swap_key.as_bytes()).unwrap();
-        decrypt(ENCRYPTED, DECRYPTED);
+        decrypt::decrypt(ENCRYPTED, DECRYPTED);
 
         assert_eq!(Path::new(DECRYPTED).exists(), false);
 

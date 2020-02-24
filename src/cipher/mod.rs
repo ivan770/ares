@@ -1,11 +1,11 @@
-pub mod raw;
+pub mod raw_key;
 pub mod input;
 
 use block_modes::{BlockMode, Cbc};
 use block_modes::block_padding::Pkcs7;
 use aes::Aes128;
 use rand::random;
-use raw::RawKey;
+use raw_key::RawKey;
 
 pub type Aes128Cbc = Cbc<Aes128, Pkcs7>;
 

@@ -1,5 +1,5 @@
 use crate::encrypted_file::EncryptedFile;
-use crate::key::input::cipher_from_user_input;
+use crate::cipher::input::cipher_from_user_input;
 use crate::file::{open_file, write_file};
 use crate::block_modes::BlockMode;
 use crate::help::HELP_MSG;

@@ -1,6 +1,6 @@
-use crate::key::cipher_from_raw_key;
-use crate::key::raw::RawKey;
-use crate::key::Aes128Cbc;
+use crate::cipher::cipher_from_raw_key;
+use crate::cipher::raw_key::RawKey;
+use crate::cipher::Aes128Cbc;
 use std::convert::TryInto;
 use std::array::TryFromSliceError;
 
