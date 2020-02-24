@@ -1,0 +1,29 @@
+name: ares
+version: git
+summary: CLI-based encryption tool, written in Rust
+description: |
+  ares is an encryption tool, that is using AES-128-CBC algorithm
+  to easily encrypt and decrypt files.
+
+base: core18
+confinement: strict
+
+plugs:
+  disk:
+    interface: home
+
+parts:
+  ares:
+    plugin: rust
+    source: .
+    override-build: |
+       curl https://sh.rustup.rs -sSf | sh -s -- -y
+       $HOME/.cargo/bin/cargo build -p ares --release
+       mkdir $SNAPCRAFT_PART_INSTALL/bin
+       mv target/release/ares $SNAPCRAFT_PART_INSTALL/bin/
+
+apps:
+  ares:
+    command: bin/ares
+    plugs:
+    - disk
