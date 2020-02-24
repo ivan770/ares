@@ -1,20 +1,16 @@
-name: tests-build
+name: Release
 
 on:
   push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+    tags:
+    - 'v*'
 
 jobs:
   build-linux:
+    name: Build Linux
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Run tests
-      run: cargo test --verbose
     - name: Build
       run: cargo build --release --verbose
     - uses: actions/upload-artifact@v1
@@ -22,11 +18,10 @@ jobs:
         name: linux
         path: target/release/ares
   build-mac:
+    name: Build Mac
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Run tests
-      run: cargo test --verbose
     - name: Build
       run: cargo build --release --verbose
     - uses: actions/upload-artifact@v1
