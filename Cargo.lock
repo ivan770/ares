@@ -39,7 +39,7 @@ dependencies = [
 
 [[package]]
 name = "ares"
-version = "0.1.0"
+version = "1.1.0"
 dependencies = [
  "aes 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "bincode 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",

@@ -9,7 +9,7 @@ mod encrypted_file;
 use actions::*;
 use clap::{App, Arg};
 
-const VERSION: &'static str = "v. 1.1";
+const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 fn main() {
     let matches = App::new("ares")
