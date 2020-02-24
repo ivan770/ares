@@ -1,5 +1,5 @@
 # ares
-![tests-build](https://github.com/ivan770/ares/workflows/tests-build/badge.svg)
+![Test](https://github.com/ivan770/ares/workflows/Test/badge.svg)
 
 CLI-based encryption tool, written in Rust
 ## Algorithm
