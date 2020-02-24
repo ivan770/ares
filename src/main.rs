@@ -2,6 +2,7 @@ extern crate block_modes;
 
 mod key;
 mod file;
+mod help;
 mod encrypt;
 mod decrypt;
 mod encrypted_file;
@@ -10,16 +11,16 @@ use encrypt::encrypt;
 use decrypt::decrypt;
 use clap::{App, Arg};
 
+const VERSION: &'static str = "v. 1.1";
+
 fn main() {
     let matches = App::new("ares")
-        .version("1.0")
+        .version(VERSION)
         .about("AES file encryption made easy")
-        .author("ivan770")
+        .author("https://github.com/ivan770")
         .subcommand(
             App::new("encrypt")
                 .about("Encrypt file")
-                .version("1.0")
-                .author("ivan770")
                 .arg(
                     Arg::with_name("from")
                         .help("file to encrypt")
@@ -36,8 +37,6 @@ fn main() {
         .subcommand(
             App::new("decrypt")
                 .about("Decrypt file")
-                .version("1.0")
-                .author("ivan770")
                 .arg(
                     Arg::with_name("from")
                         .help("file to decrypt")
