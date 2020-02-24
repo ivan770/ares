@@ -19,6 +19,7 @@ parts:
   ares:
     plugin: rust
     source: .
+    source-branch: master
     override-build: |
        curl https://sh.rustup.rs -sSf | sh -s -- -y
        $HOME/.cargo/bin/cargo build -p ares --release
