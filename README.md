@@ -1,4 +1,6 @@
 # ares
+![tests-build](https://github.com/ivan770/ares/workflows/tests-build/badge.svg)
+
 CLI-based encryption tool, written in Rust
 ## Algorithm
 ares is using AES-128-CBC.
