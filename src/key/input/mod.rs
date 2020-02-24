@@ -3,7 +3,6 @@ use crate::key::raw::RawKey;
 use crate::key::Aes128Cbc;
 use std::convert::TryInto;
 use std::array::TryFromSliceError;
-use std::fs::read;
 
 #[cfg(not(test))]
 fn request_raw_key(iv: [u8; 16]) -> Result<RawKey, TryFromSliceError>
@@ -18,7 +17,7 @@ fn request_raw_key(iv: [u8; 16]) -> Result<RawKey, TryFromSliceError>
 #[cfg(test)]
 fn request_raw_key(iv: [u8; 16]) -> Result<RawKey, TryFromSliceError>
 {
-    let key = read("key.txt").unwrap();
+    let key = std::fs::read("key.txt").unwrap();
     Ok(RawKey {
         key: key.as_slice().try_into()?,
         iv: iv

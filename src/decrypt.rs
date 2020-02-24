@@ -6,7 +6,7 @@ use bincode::deserialize;
 use std::error::Error;
 use bincode::ErrorKind;
 
-fn process(file: EncryptedFile) -> Result<Vec<u8>, Box<dyn Error>>
+fn decrypt_file(file: EncryptedFile) -> Result<Vec<u8>, Box<dyn Error>>
 {
     Ok(cipher_from_user_input(file.iv)?.decrypt_vec(&file.buffer)?)
 }
@@ -16,10 +16,18 @@ fn deserialize_file(file: &[u8]) -> Result<EncryptedFile, Box<ErrorKind>>
     Ok(deserialize(file)?)
 }
 
-fn write_buffer(file: EncryptedFile, to: &str)
+fn write_buffer(buffer: &[u8], to: &str)
 {
-    match process(file) {
-        Ok(buffer) => write_file(to, &buffer),
+    match write_file(to, buffer) {
+        Ok(_) => (),
+        Err(_) => println!("Error writing decrypted data to {}", to)
+    }
+}
+
+fn process_file(file: EncryptedFile, to: &str)
+{
+    match decrypt_file(file) {
+        Ok(buffer) => write_buffer(&buffer, to),
         Err(_) => println!("Invalid encryption key")
     }
 }
@@ -29,7 +37,7 @@ pub fn decrypt(from: &str, to: &str)
     match open_file(from) {
         Ok(file) => {
             match deserialize_file(&file) {
-                Ok(encrypted_file) => write_buffer(encrypted_file, to),
+                Ok(encrypted_file) => process_file(encrypted_file, to),
                 Err(_) => println!("Invalid file format")
             }
         },

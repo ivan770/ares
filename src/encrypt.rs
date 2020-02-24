@@ -16,12 +16,20 @@ fn process(file: &[u8]) -> Result<Vec<u8>, TryFromSliceError>
     Ok(bincode::serialize(&encrypted_file).unwrap())
 }
 
+fn write_buffer(to: &str, buffer: &[u8])
+{
+    match write_file(to, buffer) {
+        Ok(_) => (),
+        Err(_) => println!("Error writing encrypted data to {}", to)
+    }
+}
+
 pub fn encrypt(from: &str, to: &str)
 {
     match open_file(from) {
         Ok(file) => {
             match process(&file) {
-                Ok(buffer) => write_file(to, &buffer),
+                Ok(buffer) => write_buffer(to, &buffer),
                 Err(_) => println!("Invalid encryption key")
             }
         },
