@@ -7,11 +7,12 @@ ares is using AES-256-CBC.
 
 It's file format is simple - IV at file start, ciphertext at the end.
 ## Download
+
+### Linux
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/ares)
 
-To download latest stable release, check [releases page](https://github.com/ivan770/ares/releases).
-
-You can also download [unstable releases](https://github.com/ivan770/ares/actions), built by GitHub Actions
+### Any supported platform (Windows, Mac, Linux)
+You can check latest releases on [this page](https://github.com/ivan770/ares/actions?query=workflow:Release)
 
 ## Usage
 `ares help` - Show help message with available commands, and ares version
