@@ -4,9 +4,9 @@ use crate::cipher::input::cipher_from_user_input;
 use crate::block_modes::BlockMode;
 use crate::file::{open_file, write_file};
 use crate::help::HELP_MSG;
-use std::array::TryFromSliceError;
+use std::io::Error;
 
-fn process(file: &[u8]) -> Result<Vec<u8>, TryFromSliceError>
+fn process(file: &[u8]) -> Result<Vec<u8>, Error>
 {
     let iv = generate_iv();
     let encrypted_file = EncryptedFile {

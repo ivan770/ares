@@ -3,7 +3,7 @@
 
 CLI-based encryption tool, written in Rust
 ## Algorithm
-ares is using AES-128-CBC.
+ares is using AES-256-CBC.
 
 It's file format is simple - IV at file start, ciphertext at the end.
 ## Download
@@ -21,5 +21,3 @@ You can also download [unstable releases](https://github.com/ivan770/ares/action
 `ares decrypt FROM TO` - Decrypt file on path FROM, and save decrypted result to file TO
 
 While using `encrypt` and `decrypt` commands, encryption key will be requested at runtime, and it's input is hidden.
-
-**Make sure that your encryption key is exactly 16 characters long**
