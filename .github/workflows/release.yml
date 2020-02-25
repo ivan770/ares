@@ -6,7 +6,7 @@ on:
     - 'v*'
 
 jobs:
-  build-linux:
+  linux:
     name: Build Linux
     runs-on: ubuntu-latest
     steps:
@@ -17,7 +17,7 @@ jobs:
       with:
         name: linux
         path: target/release/ares
-  build-mac:
+  mac:
     name: Build Mac
     runs-on: macos-latest
     steps:
@@ -28,3 +28,14 @@ jobs:
       with:
         name: mac
         path: target/release/ares
+  win:
+    name: Build Win
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build
+      run: cargo build --release --verbose
+    - uses: actions/upload-artifact@v1
+      with:
+        name: win
+        path: target/release/ares.exe

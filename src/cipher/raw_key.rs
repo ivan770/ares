@@ -1,4 +1,6 @@
+use crate::cipher::hash::Hash;
+
 pub struct RawKey {
-    pub key: [u8; 16],
+    pub key: Hash,
     pub iv: [u8; 16]
 }
