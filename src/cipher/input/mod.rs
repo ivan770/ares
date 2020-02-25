@@ -9,6 +9,7 @@ fn request_raw_key(iv: [u8; 16]) -> Result<RawKey, Error>
 {
     let key = dialoguer::PasswordInput::new()
         .with_prompt("Encryption key")
+        .with_confirmation("Confirm encryption key", "Inputs do not match")
         .interact()?;
 
     Ok(RawKey {
