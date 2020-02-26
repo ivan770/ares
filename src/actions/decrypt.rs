@@ -1,5 +1,5 @@
+use crate::input::Input;
 use crate::encrypted_file::EncryptedFile;
-use crate::cipher::input::cipher_from_user_input;
 use crate::file::{open_file, write_file};
 use crate::block_modes::BlockMode;
 use crate::help::HELP_MSG;
@@ -9,7 +9,8 @@ use bincode::ErrorKind;
 
 fn decrypt_file(file: EncryptedFile) -> Result<Vec<u8>, Box<dyn Error>>
 {
-    Ok(cipher_from_user_input(file.iv)?.decrypt_vec(&file.buffer)?)
+    let raw_key = Input::make_from_cfg()?.to_raw_key_iv(file.iv);
+    Ok(raw_key.to_cipher().decrypt_vec(&file.buffer)?)
 }
 
 fn deserialize_file(file: &[u8]) -> Result<EncryptedFile, Box<ErrorKind>>

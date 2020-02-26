@@ -7,7 +7,7 @@ pub struct Hash {
 }
 
 impl Hash {
-    pub fn make(key: String) -> Self
+    pub fn make(key: &str) -> Self
     {
         let slice = Sha3_512::digest(key.as_bytes());
 
