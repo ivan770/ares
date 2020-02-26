@@ -8,6 +8,7 @@ pub struct Input {
 }
 
 impl Input {
+    #[allow(dead_code)]
     fn from_dialoguer() -> Result<Self, Error>
     {
         let input = dialoguer::PasswordInput::new()
@@ -18,6 +19,7 @@ impl Input {
         Ok(Input::make(input))
     }
 
+    #[allow(dead_code)]
     fn from_file() -> Result<Self, Error>
     {
         let input = String::from_utf8(std::fs::read("key.txt").unwrap()).unwrap();
