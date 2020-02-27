@@ -1,5 +1,6 @@
 extern crate block_modes;
 
+mod input;
 mod cipher;
 mod file;
 mod help;

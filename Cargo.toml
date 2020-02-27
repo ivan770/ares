@@ -1,11 +1,11 @@
 [package]
 name = "ares"
-version = "2.0.0"
+version = "3.0.0"
 authors = ["ivan770 <leshenko.ivan770@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-aes = "0.3.2"
+aes-soft = "0.3.3"
 block-modes = "0.3.3"
 rand = "0.7.3"
 serde = { version = "1.0", features = ["derive"] }
@@ -13,6 +13,7 @@ bincode = "1.2.1"
 clap = { git = "https://github.com/clap-rs/clap/" }
 dialoguer = "0.5.0"
 sha3 = "0.8.2"
+hmac = "0.7.1"
 
 [dev-dependencies]
 hex-literal = "0.2.1"
