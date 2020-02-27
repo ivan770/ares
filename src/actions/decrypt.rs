@@ -1,48 +1,59 @@
+use crate::actions::errors::Error;
 use crate::input::Input;
+use crate::cipher::iv::Iv;
+use crate::cipher::raw_key::RawKey;
 use crate::encrypted_file::EncryptedFile;
 use crate::file::{open_file, write_file};
 use crate::block_modes::BlockMode;
 use crate::help::HELP_MSG;
 use bincode::deserialize;
-use std::error::Error;
-use bincode::ErrorKind;
 
-fn decrypt_file(file: EncryptedFile) -> Result<Vec<u8>, Box<dyn Error>>
+fn make_raw_key(iv: Iv) -> Result<RawKey, Error>
 {
-    let raw_key = Input::make_from_cfg()?.to_raw_key_iv(file.iv);
-    Ok(raw_key.to_cipher().decrypt_vec(&file.buffer)?)
+    let raw_key = Input::make_from_cfg()
+        .map_err(|_| Error::InvalidInput)?
+        .to_raw_key_iv(iv);
+
+    Ok(raw_key)
 }
 
-fn deserialize_file(file: &[u8]) -> Result<EncryptedFile, Box<ErrorKind>>
+fn decrypt_file(file: EncryptedFile) -> Result<Vec<u8>, Error>
 {
-    Ok(deserialize(file)?)
+    let raw_key = make_raw_key(file.iv)?;
+    let buffer = raw_key
+        .to_cipher()
+        .decrypt_vec(&file.buffer)
+        .map_err(|_| Error::InvalidEncryptionKey)?;
+
+    Ok(buffer)
 }
 
-fn write_buffer(buffer: &[u8], to: &str)
+fn deserialize_file(file: &[u8]) -> Result<EncryptedFile, Error>
 {
-    match write_file(to, buffer) {
-        Ok(_) => (),
-        Err(_) => println!("Error writing decrypted data to {}.{}", to, HELP_MSG)
-    }
+    let encrypted_file = deserialize(file)
+        .map_err(|_| Error::InvalidFileFormat)?;
+
+    Ok(encrypted_file)
 }
 
-fn process_file(file: EncryptedFile, to: &str)
+fn write_buffer(buffer: &[u8], to: &str) -> Result<(), Error>
 {
-    match decrypt_file(file) {
-        Ok(buffer) => write_buffer(&buffer, to),
-        Err(_) => println!("Invalid encryption key.{}", HELP_MSG)
-    }
+    Ok(write_file(to, buffer).map_err(|_| Error::WritingDecryptedToFile)?)
+}
+
+fn process_file(from: &str, to: &str) -> Result<(), Error>
+{
+    let buffer = open_file(from).map_err(|_| Error::FileOpen)?;
+    let encrypted_file = deserialize_file(&buffer)?;
+    let decrypted_file = decrypt_file(encrypted_file)?;
+    write_buffer(&decrypted_file, to)?;
+    Ok(())
 }
 
 pub fn decrypt(from: &str, to: &str)
 {
-    match open_file(from) {
-        Ok(file) => {
-            match deserialize_file(&file) {
-                Ok(encrypted_file) => process_file(encrypted_file, to),
-                Err(_) => println!("Invalid file format.{}", HELP_MSG)
-            }
-        },
-        Err(_) => println!("Unable to open file.{}", HELP_MSG)
+    match process_file(from, to) {
+        Ok(_) => println!("Decrypted successfully!"),
+        Err(e) => println!("{}.{}", e, HELP_MSG)
     }
 }

@@ -1,38 +1,38 @@
+use crate::actions::errors::Error;
+use crate::cipher::raw_key::RawKey;
 use crate::encrypted_file::EncryptedFile;
 use crate::input::Input;
 use crate::block_modes::BlockMode;
 use crate::file::{open_file, write_file};
 use crate::help::HELP_MSG;
-use std::io::Error;
 
-fn process(file: &[u8]) -> Result<Vec<u8>, Error>
+fn make_raw_key() -> Result<RawKey, Error>
 {
-    let raw_key = Input::make_from_cfg()?.to_raw_key();
-    let encrypted_file = EncryptedFile {
-        iv: raw_key.iv,
-        buffer: raw_key.to_cipher().encrypt_vec(file)
-    };
+    let raw_key = Input::make_from_cfg()
+        .map_err(|_| Error::InvalidInput)?
+        .to_raw_key();
 
-    Ok(bincode::serialize(&encrypted_file).unwrap())
+    Ok(raw_key)
 }
 
-fn write_buffer(to: &str, buffer: &[u8])
+fn process(from: &str, to: &str) -> Result<(), Error>
 {
-    match write_file(to, buffer) {
-        Ok(_) => (),
-        Err(_) => println!("Error writing encrypted data to {}.{}", to, HELP_MSG)
-    }
+    let file = open_file(from).map_err(|_| Error::FileOpen)?;
+    let raw_key = make_raw_key()?;
+    let encrypted_file = EncryptedFile {
+        iv: raw_key.iv,
+        buffer: raw_key.to_cipher().encrypt_vec(&file)
+    };
+
+    let encrypted_buffer = bincode::serialize(&encrypted_file).unwrap();
+    write_file(to, &encrypted_buffer).map_err(|_| Error::WritingEncryptedToFile)?;
+    Ok(())
 }
 
 pub fn encrypt(from: &str, to: &str)
 {
-    match open_file(from) {
-        Ok(file) => {
-            match process(&file) {
-                Ok(buffer) => write_buffer(to, &buffer),
-                Err(_) => println!("Invalid encryption key.{}", HELP_MSG)
-            }
-        },
-        Err(_) => println!("Unable to open file.{}", HELP_MSG)
+    match process(from, to) {
+        Ok(_) => println!("Encrypted successfully!"),
+        Err(e) => println!("{}.{}", e, HELP_MSG)
     }
 }
