@@ -1,4 +1,5 @@
 use crate::actions::errors::Error;
+use crate::actions::progress::Progress;
 use crate::input::Input;
 use crate::cipher::iv::Iv;
 use crate::cipher::raw_key::RawKey;
@@ -17,9 +18,8 @@ fn make_raw_key(iv: Iv) -> Result<RawKey, Error>
     Ok(raw_key)
 }
 
-fn decrypt_file(file: EncryptedFile) -> Result<Vec<u8>, Error>
+fn decrypt_file(file: EncryptedFile, raw_key: RawKey) -> Result<Vec<u8>, Error>
 {
-    let raw_key = make_raw_key(file.iv)?;
     let buffer = raw_key
         .to_cipher()
         .decrypt_vec(&file.buffer)
@@ -41,19 +41,30 @@ fn write_buffer(buffer: &[u8], to: &str) -> Result<(), Error>
     Ok(write_file(to, buffer).map_err(|_| Error::WritingDecryptedToFile)?)
 }
 
-fn process_file(from: &str, to: &str) -> Result<(), Error>
+fn process_file(pb: &Progress, from: &str, to: &str) -> Result<(), Error>
 {
     let buffer = open_file(from).map_err(|_| Error::FileOpen)?;
     let encrypted_file = deserialize_file(&buffer)?;
-    let decrypted_file = decrypt_file(encrypted_file)?;
+    let raw_key = make_raw_key(encrypted_file.iv)?;
+    pb.spawn_thread()
+        .apply_styles()
+        .start("Decrypting...");
+    let decrypted_file = decrypt_file(encrypted_file, raw_key)?;
     write_buffer(&decrypted_file, to)?;
     Ok(())
 }
 
 pub fn decrypt(from: &str, to: &str)
 {
-    match process_file(from, to) {
-        Ok(_) => println!("Decrypted successfully!"),
-        Err(e) => println!("{}.{}", e, HELP_MSG)
+    let pb = Progress::make();
+    match process_file(&pb, from, to) {
+        Ok(_) => {
+            pb.end();
+            println!("Decrypted successfully!")
+        },
+        Err(e) => {
+            pb.end();
+            println!("{}.{}", e, HELP_MSG)
+        }
     }
 }
