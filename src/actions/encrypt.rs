@@ -1,4 +1,5 @@
 use crate::actions::errors::Error;
+use crate::actions::progress::Progress;
 use crate::cipher::raw_key::RawKey;
 use crate::encrypted_file::EncryptedFile;
 use crate::input::Input;
@@ -15,10 +16,14 @@ fn make_raw_key() -> Result<RawKey, Error>
     Ok(raw_key)
 }
 
-fn process(from: &str, to: &str) -> Result<(), Error>
+fn process(pb: &Progress, from: &str, to: &str) -> Result<(), Error>
 {
     let file = open_file(from).map_err(|_| Error::FileOpen)?;
     let raw_key = make_raw_key()?;
+    pb.spawn_thread()
+        .apply_styles()
+        .start("Encrypting...");
+
     let encrypted_file = EncryptedFile {
         iv: raw_key.iv,
         buffer: raw_key.to_cipher().encrypt_vec(&file)
@@ -31,8 +36,15 @@ fn process(from: &str, to: &str) -> Result<(), Error>
 
 pub fn encrypt(from: &str, to: &str)
 {
-    match process(from, to) {
-        Ok(_) => println!("Encrypted successfully!"),
-        Err(e) => println!("{}.{}", e, HELP_MSG)
+    let pb = Progress::make();
+    match process(&pb, from, to) {
+        Ok(_) => {
+            pb.end();
+            println!("Encrypted successfully!")
+        },
+        Err(e) => {
+            pb.end();
+            println!("{}.{}", e, HELP_MSG)
+        }
     }
 }
