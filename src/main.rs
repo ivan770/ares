@@ -15,7 +15,7 @@ const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 fn main() {
     let matches = App::new("ares")
         .version(VERSION)
-        .about("AES file encryption made easy")
+        .about("File encryption made easy")
         .author("https://github.com/ivan770")
         .subcommand(
             App::new("encrypt")
