@@ -19,6 +19,7 @@ mod tests {
     use crate::cipher::iv::Iv;
     use std::convert::TryInto;
     use hex_literal::hex;
+    use hmac::crypto_mac::Mac;
 
     #[test]
     fn is_encrypting_correctly() {
@@ -72,5 +73,21 @@ mod tests {
         let rawkey = RawKey::make(key, iv);
 
         rawkey.to_cipher();
+    }
+
+    #[test]
+    fn is_signing_correctly()
+    {
+        let iv = Iv {
+            iv: hex!("746f74616c6c7972616e646f6d766563")
+        };
+        let key = Hash::make("testkey");
+        let rawkey = RawKey::make(key, iv);
+
+        let msg = String::from("123");
+
+        let mut sign = rawkey.to_mac();
+        sign.input(msg.as_bytes());
+        assert_eq!(sign.result().code().as_slice(), hex!("4606943e0582b639e375a78628358d12783e45c74635a8fd3d26812633b34d14"));
     }
 }
