@@ -4,5 +4,6 @@ use serde::{Serialize, Deserialize};
 #[derive(Serialize, Deserialize)]
 pub struct EncryptedFile {
     pub iv: Iv,
-    pub buffer: Vec<u8>
+    pub buffer: Vec<u8>,
+    pub mac: [u8; 32]
 }
