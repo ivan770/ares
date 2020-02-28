@@ -6,6 +6,8 @@ use crate::input::Input;
 use crate::block_modes::BlockMode;
 use crate::file::{open_file, write_file};
 use crate::help::HELP_MSG;
+use hmac::crypto_mac::Mac;
+use std::convert::TryInto;
 
 fn make_raw_key() -> Result<RawKey, Error>
 {
@@ -16,6 +18,13 @@ fn make_raw_key() -> Result<RawKey, Error>
     Ok(raw_key)
 }
 
+fn make_mac_result(raw_key: &RawKey, input: &[u8]) -> [u8; 32]
+{
+    let mut mac = raw_key.to_mac();
+    mac.input(input);
+    mac.result().code().as_slice().try_into().unwrap()
+}
+
 fn process(pb: &Progress, from: &str, to: &str) -> Result<(), Error>
 {
     let file = open_file(from).map_err(|_| Error::FileOpen)?;
@@ -23,12 +32,17 @@ fn process(pb: &Progress, from: &str, to: &str) -> Result<(), Error>
     pb.spawn_thread()
         .apply_styles()
         .start("Encrypting...");
+        
+    let buffer = raw_key.to_cipher().encrypt_vec(&file);
+    let mac = make_mac_result(&raw_key, &buffer);
 
     let encrypted_file = EncryptedFile {
         iv: raw_key.iv,
-        buffer: raw_key.to_cipher().encrypt_vec(&file)
+        buffer,
+        mac
     };
 
+    pb.start("Saving to file...");
     let encrypted_buffer = bincode::serialize(&encrypted_file).unwrap();
     write_file(to, &encrypted_buffer).map_err(|_| Error::WritingEncryptedToFile)?;
     Ok(())

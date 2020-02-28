@@ -8,6 +8,7 @@ use crate::file::{open_file, write_file};
 use crate::block_modes::BlockMode;
 use crate::help::HELP_MSG;
 use bincode::deserialize;
+use hmac::crypto_mac::Mac;
 
 fn make_raw_key(iv: Iv) -> Result<RawKey, Error>
 {
@@ -16,6 +17,15 @@ fn make_raw_key(iv: Iv) -> Result<RawKey, Error>
         .to_raw_key_iv(iv);
 
     Ok(raw_key)
+}
+
+fn check_signature(file: &EncryptedFile, raw_key: &RawKey) -> Result<(), Error>
+{
+    let mut mac = raw_key
+        .to_mac();
+
+    mac.input(&file.buffer);
+    Ok(mac.verify(&file.mac).map_err(|_| Error::InvalidEncryptionKey)?)
 }
 
 fn decrypt_file(file: EncryptedFile, raw_key: RawKey) -> Result<Vec<u8>, Error>
@@ -41,23 +51,27 @@ fn write_buffer(buffer: &[u8], to: &str) -> Result<(), Error>
     Ok(write_file(to, buffer).map_err(|_| Error::WritingDecryptedToFile)?)
 }
 
-fn process_file(pb: &Progress, from: &str, to: &str) -> Result<(), Error>
+fn process_file(pb: &Progress, from: &str, to: &str, sign_check: bool) -> Result<(), Error>
 {
     let buffer = open_file(from).map_err(|_| Error::FileOpen)?;
     let encrypted_file = deserialize_file(&buffer)?;
     let raw_key = make_raw_key(encrypted_file.iv)?;
-    pb.spawn_thread()
-        .apply_styles()
-        .start("Decrypting...");
+    pb.spawn_thread().apply_styles();
+    if sign_check {
+        pb.start("Checking signature...");
+        check_signature(&encrypted_file, &raw_key)?;
+    }
+    pb.start("Decrypting...");
     let decrypted_file = decrypt_file(encrypted_file, raw_key)?;
+    pb.start("Saving to file...");
     write_buffer(&decrypted_file, to)?;
     Ok(())
 }
 
-pub fn decrypt(from: &str, to: &str)
+pub fn decrypt(from: &str, to: &str, sign_check: bool)
 {
     let pb = Progress::make();
-    match process_file(&pb, from, to) {
+    match process_file(&pb, from, to, sign_check) {
         Ok(_) => {
             pb.end();
             println!("Decrypted successfully!")

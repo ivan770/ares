@@ -15,7 +15,7 @@ const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 fn main() {
     let matches = App::new("ares")
         .version(VERSION)
-        .about("AES file encryption made easy")
+        .about("File encryption made easy")
         .author("https://github.com/ivan770")
         .subcommand(
             App::new("encrypt")
@@ -47,6 +47,12 @@ fn main() {
                         .help("output file")
                         .index(2)
                         .required(true),
+                )
+                .arg(
+                    Arg::with_name("ignore-sign")
+                        .help("ignore signature check")
+                        .short('i')
+                        .long("ignore-sign"),
                 ),
         )
         .get_matches();
@@ -58,7 +64,8 @@ fn main() {
         },
         Some("decrypt") => {
             let submatches = matches.subcommand_matches("decrypt").unwrap();
-            decrypt::decrypt(submatches.value_of("from").unwrap(), submatches.value_of("to").unwrap());
+            let sign_match = !submatches.is_present("ignore-sign");
+            decrypt::decrypt(submatches.value_of("from").unwrap(), submatches.value_of("to").unwrap(), sign_match);
         },
         _ => println!("Command not found. Use --help flag to open help"),
     }
@@ -99,7 +106,7 @@ mod tests {
         key_file.write_all(key.as_bytes()).unwrap();
 
         encrypt::encrypt(UNENCRYPTED, ENCRYPTED);
-        decrypt::decrypt(ENCRYPTED, DECRYPTED);
+        decrypt::decrypt(ENCRYPTED, DECRYPTED, true);
         assert_eq!(msg.as_bytes(), read(DECRYPTED).unwrap().as_slice());
 
         let swap_key = "supersecretkey13";
@@ -107,7 +114,7 @@ mod tests {
 
         key_file = File::create(KEY).unwrap();
         key_file.write_all(swap_key.as_bytes()).unwrap();
-        decrypt::decrypt(ENCRYPTED, DECRYPTED);
+        decrypt::decrypt(ENCRYPTED, DECRYPTED, true);
 
         assert_eq!(Path::new(DECRYPTED).exists(), false);
 
