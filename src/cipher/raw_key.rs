@@ -1,5 +1,5 @@
 use crate::block_modes::BlockMode;
-use crate::cipher::hash::{Hash, Hasher};
+use crate::cipher::hashers::{Hash, Hasher};
 use crate::cipher::iv::Iv;
 use crate::cipher::Aes;
 use crate::cipher::Hasher as HasherImpl;

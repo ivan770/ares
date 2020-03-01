@@ -1,4 +1,3 @@
-pub mod hash;
 pub mod hashers;
 pub mod iv;
 pub mod raw_key;
@@ -18,7 +17,7 @@ pub type Hasher = Sha3_512;
 mod tests {
     use super::Hasher as HasherImpl;
     use crate::block_modes::BlockMode;
-    use crate::cipher::hash::Hasher;
+    use crate::cipher::hashers::Hasher;
     use crate::cipher::iv::Iv;
     use crate::cipher::raw_key::RawKey;
     use hex_literal::hex;
