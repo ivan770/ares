@@ -3,8 +3,8 @@ pub mod hashers;
 pub mod iv;
 pub mod raw_key;
 
-use crate::cipher::hashers::sha3_512::Sha3_512;
 use crate::cipher::ciphers::aes_256::Aes256Cbc;
+use crate::cipher::hashers::sha3_512::Sha3_512;
 use hmac::Hmac as BaseHmac;
 use sha3::Sha3_256;
 
