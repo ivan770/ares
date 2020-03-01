@@ -31,5 +31,7 @@ mod tests {
         write_file(FILE_NAME, &buffer).unwrap();
         assert_eq!(Path::new(FILE_NAME).exists(), true);
         assert_eq!(open_file(FILE_NAME).unwrap().as_slice(), buffer);
+
+        remove_file(FILE_NAME).ok();
     }
 }
