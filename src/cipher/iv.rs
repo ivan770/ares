@@ -1,16 +1,13 @@
 use rand::random;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Copy, Clone, Serialize, Deserialize)]
 pub struct Iv {
-    pub iv: [u8; 16]
+    pub iv: [u8; 16],
 }
 
 impl Iv {
-    pub fn random() -> Self
-    {
-        Iv {
-            iv: random()
-        }
+    pub fn random() -> Self {
+        Iv { iv: random() }
     }
 }

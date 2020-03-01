@@ -1,15 +1,13 @@
 use std::fs::read;
-use std::io::Error;
 use std::fs::File;
+use std::io::Error;
 use std::io::Write;
 
-pub fn open_file(name: &str) -> Result<Vec<u8>, Error>
-{
+pub fn open_file(name: &str) -> Result<Vec<u8>, Error> {
     read(name)
 }
 
-pub fn write_file(name: &str, buffer: &[u8]) -> Result<(), Box<dyn std::error::Error>>
-{
+pub fn write_file(name: &str, buffer: &[u8]) -> Result<(), Box<dyn std::error::Error>> {
     let mut file = File::create(name)?;
     file.write_all(buffer)?;
 
@@ -19,15 +17,14 @@ pub fn write_file(name: &str, buffer: &[u8]) -> Result<(), Box<dyn std::error::E
 #[cfg(test)]
 mod tests {
     const FILE_NAME: &'static str = "fstest";
-    
+
+    use super::{open_file, write_file};
     use rand::random;
-    use super::{write_file, open_file};
-    use std::path::Path;
     use std::fs::remove_file;
+    use std::path::Path;
 
     #[test]
-    fn uses_fs_correctly()
-    {
+    fn uses_fs_correctly() {
         let buffer: [u8; 16] = random();
 
         remove_file(FILE_NAME).ok();

@@ -6,7 +6,7 @@ pub enum Error {
     InvalidEncryptionKey,
     WritingDecryptedToFile,
     WritingEncryptedToFile,
-    InvalidInput
+    InvalidInput,
 }
 
 impl fmt::Display for Error {
