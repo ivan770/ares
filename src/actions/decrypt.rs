@@ -27,7 +27,7 @@ fn check_signature(file: &EncryptedFile, raw_key: &RawKey) -> Result<(), Error> 
         .map_err(|_| Error::InvalidEncryptionKey)?)
 }
 
-fn decrypt_file(file: EncryptedFile, raw_key: RawKey) -> Result<Vec<u8>, Error> {
+fn decrypt_file(file: &EncryptedFile, raw_key: RawKey) -> Result<Vec<u8>, Error> {
     let buffer = raw_key
         .to_cipher()
         .decrypt_vec(&file.buffer)
@@ -56,7 +56,7 @@ fn process_file(pb: &Progress, from: &str, to: &str, sign_check: bool) -> Result
         check_signature(&encrypted_file, &raw_key)?;
     }
     pb.start("Decrypting...");
-    let decrypted_file = decrypt_file(encrypted_file, raw_key)?;
+    let decrypted_file = decrypt_file(&encrypted_file, raw_key)?;
     pb.start("Saving to file...");
     write_buffer(&decrypted_file, to)?;
     Ok(())

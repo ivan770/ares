@@ -1,6 +1,7 @@
-use crate::cipher::hash::Hash;
+use crate::cipher::hash::Hasher;
 use crate::cipher::iv::Iv;
 use crate::cipher::raw_key::RawKey;
+use crate::cipher::Hasher as HasherImpl;
 use std::io::Error;
 
 pub struct Input {
@@ -41,6 +42,6 @@ impl Input {
     }
 
     pub fn to_raw_key_iv(&self, iv: Iv) -> RawKey {
-        RawKey::make(Hash::make(&self.input), iv)
+        RawKey::make(HasherImpl::make(&self.input), iv)
     }
 }

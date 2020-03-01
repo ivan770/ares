@@ -1,20 +1,24 @@
 pub mod hash;
+pub mod hashers;
 pub mod iv;
 pub mod raw_key;
 
+use crate::cipher::hashers::sha3_512::Sha3_512;
 use aes_soft::Aes256;
 use block_modes::block_padding::Pkcs7;
 use block_modes::Cbc;
-use hmac::Hmac;
+use hmac::Hmac as BaseHmac;
 use sha3::Sha3_256;
 
-pub type Aes256Cbc = Cbc<Aes256, Pkcs7>;
-pub type HmacSha256 = Hmac<Sha3_256>;
+pub type Aes = Cbc<Aes256, Pkcs7>;
+pub type Hmac = BaseHmac<Sha3_256>;
+pub type Hasher = Sha3_512;
 
 #[cfg(test)]
 mod tests {
+    use super::Hasher as HasherImpl;
     use crate::block_modes::BlockMode;
-    use crate::cipher::hash::Hash;
+    use crate::cipher::hash::Hasher;
     use crate::cipher::iv::Iv;
     use crate::cipher::raw_key::RawKey;
     use hex_literal::hex;
@@ -26,7 +30,7 @@ mod tests {
         let iv = Iv {
             iv: hex!("746f74616c6c7972616e646f6d766563"),
         };
-        let key = Hash::make("testkey");
+        let key = HasherImpl::make("testkey");
         let rawkey = RawKey::make(key, iv);
 
         let msg = String::from("123");
@@ -43,7 +47,7 @@ mod tests {
         let iv = Iv {
             iv: hex!("746f74616c6c7972616e646f6d766563"),
         };
-        let key = Hash::make("");
+        let key = HasherImpl::make("");
         let rawkey = RawKey::make(key, iv);
 
         let msg = String::from("123");
@@ -61,7 +65,7 @@ mod tests {
         let iv = Iv {
             iv: String::from("qwerty").as_bytes().try_into().unwrap(),
         };
-        let key = Hash::make("testkey");
+        let key = HasherImpl::make("testkey");
         let rawkey = RawKey::make(key, iv);
 
         rawkey.to_cipher();
@@ -76,7 +80,7 @@ mod tests {
                 .try_into()
                 .unwrap(),
         };
-        let key = Hash::make("testkey");
+        let key = HasherImpl::make("testkey");
         let rawkey = RawKey::make(key, iv);
 
         rawkey.to_cipher();
@@ -87,7 +91,7 @@ mod tests {
         let iv = Iv {
             iv: hex!("746f74616c6c7972616e646f6d766563"),
         };
-        let key = Hash::make("testkey");
+        let key = HasherImpl::make("testkey");
         let rawkey = RawKey::make(key, iv);
 
         let msg = String::from("123");
