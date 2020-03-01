@@ -1,7 +1,7 @@
 extern crate block_modes;
 
 mod actions;
-mod cipher;
+mod crypto;
 mod encrypted_file;
 mod file;
 mod help;

@@ -3,8 +3,8 @@ pub mod hashers;
 pub mod iv;
 pub mod raw_key;
 
-use crate::cipher::ciphers::aes_256::Aes256Cbc;
-use crate::cipher::hashers::sha3_512::Sha3_512;
+use crate::crypto::ciphers::aes_256::Aes256Cbc;
+use crate::crypto::hashers::sha3_512::Sha3_512;
 use hmac::Hmac as BaseHmac;
 use sha3::Sha3_256;
 
@@ -15,10 +15,10 @@ pub type Hasher = Sha3_512;
 #[cfg(test)]
 mod tests {
     use super::Hasher as HasherImpl;
-    use crate::cipher::ciphers::Cipher;
-    use crate::cipher::hashers::Hasher;
-    use crate::cipher::iv::Iv;
-    use crate::cipher::raw_key::RawKey;
+    use crate::crypto::ciphers::Cipher;
+    use crate::crypto::hashers::Hasher;
+    use crate::crypto::iv::Iv;
+    use crate::crypto::raw_key::RawKey;
     use hex_literal::hex;
     use hmac::crypto_mac::Mac;
     use std::convert::TryInto;

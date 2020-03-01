@@ -1,4 +1,4 @@
-use crate::cipher::iv::Iv;
+use crate::crypto::iv::Iv;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]

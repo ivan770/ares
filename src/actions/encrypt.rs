@@ -1,7 +1,7 @@
 use crate::actions::errors::Error;
 use crate::actions::progress::Progress;
-use crate::cipher::ciphers::Cipher;
-use crate::cipher::raw_key::RawKey;
+use crate::crypto::ciphers::Cipher;
+use crate::crypto::raw_key::RawKey;
 use crate::encrypted_file::EncryptedFile;
 use crate::file::{open_file, write_file};
 use crate::help::HELP_MSG;

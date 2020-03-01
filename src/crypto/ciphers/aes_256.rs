@@ -1,7 +1,7 @@
 use crate::block_modes::BlockMode;
 use crate::block_modes::BlockModeError;
-use crate::cipher::ciphers::Cipher;
-use crate::cipher::raw_key::RawKey;
+use crate::crypto::ciphers::Cipher;
+use crate::crypto::raw_key::RawKey;
 use aes_soft::Aes256;
 use block_modes::block_padding::Pkcs7;
 use block_modes::Cbc;
@@ -35,11 +35,11 @@ impl<'a> Cipher<BlockModeError> for Aes256Cbc<'a> {
 #[cfg(test)]
 mod tests {
     use super::Aes256Cbc;
-    use crate::cipher::ciphers::Cipher;
-    use crate::cipher::hashers::Hasher;
-    use crate::cipher::iv::Iv;
-    use crate::cipher::raw_key::RawKey;
-    use crate::cipher::Hasher as HasherImpl;
+    use crate::crypto::ciphers::Cipher;
+    use crate::crypto::hashers::Hasher;
+    use crate::crypto::iv::Iv;
+    use crate::crypto::raw_key::RawKey;
+    use crate::crypto::Hasher as HasherImpl;
     use hex_literal::hex;
 
     #[test]

@@ -1,8 +1,8 @@
-use crate::cipher::hashers::{Hash, Hasher};
-use crate::cipher::iv::Iv;
-use crate::cipher::Aes;
-use crate::cipher::Hasher as HasherImpl;
-use crate::cipher::Hmac;
+use crate::crypto::hashers::{Hash, Hasher};
+use crate::crypto::iv::Iv;
+use crate::crypto::Aes;
+use crate::crypto::Hasher as HasherImpl;
+use crate::crypto::Hmac;
 use hmac::crypto_mac::Mac;
 
 pub struct RawKey {
