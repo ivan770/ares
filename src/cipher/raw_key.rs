@@ -1,8 +1,9 @@
 use crate::block_modes::BlockMode;
-use crate::cipher::hash::Hash;
+use crate::cipher::hash::{Hash, Hasher};
 use crate::cipher::iv::Iv;
-use crate::cipher::Aes256Cbc;
-use crate::cipher::HmacSha256;
+use crate::cipher::Aes;
+use crate::cipher::Hasher as HasherImpl;
+use crate::cipher::Hmac;
 use hmac::crypto_mac::Mac;
 
 pub struct RawKey {
@@ -16,25 +17,25 @@ impl RawKey {
     }
 
     pub fn from_string(key: &str) -> Self {
-        RawKey::make(Hash::make(key), Iv::random())
+        RawKey::make(HasherImpl::make(key), Iv::random())
     }
 
-    pub fn to_cipher(&self) -> Aes256Cbc {
-        Aes256Cbc::new_var(&self.key.encrypt, &self.iv.iv).unwrap()
+    pub fn to_cipher(&self) -> Aes {
+        Aes::new_var(&self.key.encrypt, &self.iv.iv).unwrap()
     }
 
-    pub fn to_mac(&self) -> HmacSha256 {
-        HmacSha256::new_varkey(&self.key.mac).unwrap()
+    pub fn to_mac(&self) -> Hmac {
+        Hmac::new_varkey(&self.key.mac).unwrap()
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{Hash, Iv, RawKey};
+    use super::{Hasher, HasherImpl, Iv, RawKey};
 
     #[test]
     fn generates_raw_key_correctly() {
-        let hash = Hash::make("Qwerty");
+        let hash = HasherImpl::make("Qwerty");
         let iv = Iv::random();
         let raw_key = RawKey::make(hash, iv);
         raw_key.to_cipher();
