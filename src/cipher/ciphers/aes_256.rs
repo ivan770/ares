@@ -37,3 +37,32 @@ impl<'a> Cipher<BlockModeError> for Aes256Cbc<'a> {
         Ok(self.make_cipher().decrypt_vec(buffer)?)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Aes256Cbc;
+    use crate::cipher::iv::Iv;
+    use crate::cipher::Hasher as HasherImpl;
+    use crate::cipher::hashers::Hasher;
+    use crate::cipher::ciphers::Cipher;
+    use crate::cipher::raw_key::RawKey;
+    use hex_literal::hex;
+
+    #[test]
+    fn is_encrypting_correctly()
+    {
+        let iv = Iv {
+            iv: hex!("746f74616c6c7972616e646f6d766563"),
+        };
+        let key = HasherImpl::make("testkey");
+        let raw_key = RawKey::make(key, iv);
+
+        let msg = String::from("123");
+
+        let encrypted_msg = Aes256Cbc::make(&raw_key).encrypt(msg.as_bytes());
+        assert_eq!(
+            encrypted_msg.as_ref(),
+            hex!("11491BF281032E30F85299870CD62B0B")
+        );
+    }
+}
