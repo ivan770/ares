@@ -1,6 +1,6 @@
 use crate::actions::errors::Error;
 use crate::actions::progress::Progress;
-use crate::block_modes::BlockMode;
+use crate::cipher::ciphers::Cipher;
 use crate::cipher::iv::Iv;
 use crate::cipher::raw_key::RawKey;
 use crate::encrypted_file::EncryptedFile;
@@ -30,7 +30,7 @@ fn check_signature(file: &EncryptedFile, raw_key: &RawKey) -> Result<(), Error> 
 fn decrypt_file(file: &EncryptedFile, raw_key: RawKey) -> Result<Vec<u8>, Error> {
     let buffer = raw_key
         .to_cipher()
-        .decrypt_vec(&file.buffer)
+        .decrypt(&file.buffer)
         .map_err(|_| Error::InvalidEncryptionKey)?;
 
     Ok(buffer)

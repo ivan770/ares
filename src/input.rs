@@ -1,4 +1,4 @@
-use crate::cipher::hash::Hasher;
+use crate::cipher::hashers::Hasher;
 use crate::cipher::iv::Iv;
 use crate::cipher::raw_key::RawKey;
 use crate::cipher::Hasher as HasherImpl;

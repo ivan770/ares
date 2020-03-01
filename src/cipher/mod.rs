@@ -1,24 +1,22 @@
-pub mod hash;
+pub mod ciphers;
 pub mod hashers;
 pub mod iv;
 pub mod raw_key;
 
 use crate::cipher::hashers::sha3_512::Sha3_512;
-use aes_soft::Aes256;
-use block_modes::block_padding::Pkcs7;
-use block_modes::Cbc;
+use crate::cipher::ciphers::aes_256::Aes256Cbc;
 use hmac::Hmac as BaseHmac;
 use sha3::Sha3_256;
 
-pub type Aes = Cbc<Aes256, Pkcs7>;
+pub type Aes<'a> = Aes256Cbc<'a>;
 pub type Hmac = BaseHmac<Sha3_256>;
 pub type Hasher = Sha3_512;
 
 #[cfg(test)]
 mod tests {
     use super::Hasher as HasherImpl;
-    use crate::block_modes::BlockMode;
-    use crate::cipher::hash::Hasher;
+    use crate::cipher::ciphers::Cipher;
+    use crate::cipher::hashers::Hasher;
     use crate::cipher::iv::Iv;
     use crate::cipher::raw_key::RawKey;
     use hex_literal::hex;
@@ -35,7 +33,7 @@ mod tests {
 
         let msg = String::from("123");
 
-        let encrypted_msg = rawkey.to_cipher().encrypt_vec(msg.as_bytes());
+        let encrypted_msg = rawkey.to_cipher().encrypt(msg.as_bytes());
         assert_eq!(
             encrypted_msg.as_ref(),
             hex!("11491BF281032E30F85299870CD62B0B")
@@ -52,7 +50,7 @@ mod tests {
 
         let msg = String::from("123");
 
-        let encrypted_msg = rawkey.to_cipher().encrypt_vec(msg.as_bytes());
+        let encrypted_msg = rawkey.to_cipher().encrypt(msg.as_bytes());
         assert_eq!(
             encrypted_msg.as_ref(),
             hex!("5AF16C47A34F07D4C3F569344B1D6673")

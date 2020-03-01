@@ -1,6 +1,6 @@
 use crate::actions::errors::Error;
 use crate::actions::progress::Progress;
-use crate::block_modes::BlockMode;
+use crate::cipher::ciphers::Cipher;
 use crate::cipher::raw_key::RawKey;
 use crate::encrypted_file::EncryptedFile;
 use crate::file::{open_file, write_file};
@@ -28,7 +28,7 @@ fn process(pb: &Progress, from: &str, to: &str) -> Result<(), Error> {
     let raw_key = make_raw_key()?;
     pb.spawn_thread().apply_styles().start("Encrypting...");
 
-    let buffer = raw_key.to_cipher().encrypt_vec(&file);
+    let buffer = raw_key.to_cipher().encrypt(&file);
     let mac = make_mac_result(&raw_key, &buffer);
 
     let encrypted_file = EncryptedFile {

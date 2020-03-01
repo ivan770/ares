@@ -1,5 +1,4 @@
-use crate::block_modes::BlockMode;
-use crate::cipher::hash::{Hash, Hasher};
+use crate::cipher::hashers::{Hash, Hasher};
 use crate::cipher::iv::Iv;
 use crate::cipher::Aes;
 use crate::cipher::Hasher as HasherImpl;
@@ -7,7 +6,7 @@ use crate::cipher::Hmac;
 use hmac::crypto_mac::Mac;
 
 pub struct RawKey {
-    key: Hash,
+    pub key: Hash,
     pub iv: Iv,
 }
 
@@ -21,7 +20,7 @@ impl RawKey {
     }
 
     pub fn to_cipher(&self) -> Aes {
-        Aes::new_var(&self.key.encrypt, &self.iv.iv).unwrap()
+        Aes::make(self)
     }
 
     pub fn to_mac(&self) -> Hmac {
