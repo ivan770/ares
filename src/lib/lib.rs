@@ -18,14 +18,12 @@ mod tests {
     use hex_literal::hex;
     use hmac::crypto_mac::Mac;
 
-    type HasherImpl = Sha3_512;
-
     #[test]
     fn is_signing_correctly() {
         let iv = Iv {
             iv: hex!("746f74616c6c7972616e646f6d766563"),
         };
-        let key = HasherImpl::make("testkey");
+        let key = Sha3_512::make("testkey");
         let rawkey = RawKey::make(key, iv);
 
         let msg = String::from("123");
