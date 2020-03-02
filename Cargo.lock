@@ -20,7 +20,7 @@ dependencies = [
 
 [[package]]
 name = "ares"
-version = "3.1.0"
+version = "3.2.0"
 dependencies = [
  "aes-soft 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "bincode 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
