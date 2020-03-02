@@ -1,5 +1,6 @@
 pub mod aes_256;
 
+#[derive(Debug)]
 pub enum Error {
     DecryptionError,
 }
