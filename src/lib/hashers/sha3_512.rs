@@ -17,7 +17,7 @@ impl Hasher for Sha3_512 {
 
 #[cfg(test)]
 mod tests {
-    use super::Sha3_512;
+    use crate::hashers::sha3_512::Sha3_512;
     use crate::hashers::Hasher;
     use hex_literal::hex;
 

@@ -1,8 +1,8 @@
 pub mod ciphers;
+pub mod encrypted_file;
 pub mod hashers;
 pub mod iv;
 pub mod raw_key;
-pub mod encrypted_file;
 
 use hmac::Hmac as BaseHmac;
 use sha3::Sha3_256;
@@ -11,8 +11,8 @@ pub type Hmac = BaseHmac<Sha3_256>;
 
 #[cfg(test)]
 mod tests {
-    use crate::hashers::Hasher;
     use crate::hashers::sha3_512::Sha3_512;
+    use crate::hashers::Hasher;
     use crate::iv::Iv;
     use crate::raw_key::RawKey;
     use hex_literal::hex;

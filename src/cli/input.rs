@@ -1,7 +1,7 @@
+use crate::Hasher as HasherImpl;
 use ares::hashers::Hasher;
 use ares::iv::Iv;
 use ares::raw_key::RawKey;
-use crate::Hasher as HasherImpl;
 use std::io::Error;
 
 pub struct Input {

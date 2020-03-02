@@ -1,16 +1,15 @@
 use crate::actions::errors::Error;
 use crate::actions::progress::Progress;
-use crate::Aes;
-use ares::ciphers::Cipher;
-use ares::iv::Iv;
-use ares::raw_key::RawKey;
-use ares::encrypted_file::EncryptedFile;
 use crate::file::{open_file, write_file};
 use crate::help::HELP_MSG;
 use crate::input::Input;
+use crate::Aes;
+use ares::ciphers::Cipher;
+use ares::encrypted_file::EncryptedFile;
+use ares::iv::Iv;
+use ares::raw_key::RawKey;
 use bincode::deserialize;
 use hmac::crypto_mac::Mac;
-
 
 fn make_raw_key(iv: Iv) -> Result<RawKey, Error> {
     let raw_key = Input::make_from_cfg()

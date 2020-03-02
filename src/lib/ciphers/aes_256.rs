@@ -1,9 +1,9 @@
-use block_modes::BlockMode;
-use crate::ciphers::Error;
 use crate::ciphers::Cipher;
+use crate::ciphers::Error;
 use crate::raw_key::RawKey;
 use aes_soft::Aes256;
 use block_modes::block_padding::Pkcs7;
+use block_modes::BlockMode;
 use block_modes::Cbc;
 
 type Conjuncted = Cbc<Aes256, Pkcs7>;
@@ -24,7 +24,10 @@ impl<'a> Cipher for Aes256Cbc<'a> {
     }
 
     fn decrypt(&self, buffer: &[u8]) -> Result<Vec<u8>, Error> {
-        Ok(self.make_cipher().decrypt_vec(buffer).map_err(|_| Error::DecryptionError)?)
+        Ok(self
+            .make_cipher()
+            .decrypt_vec(buffer)
+            .map_err(|_| Error::DecryptionError)?)
     }
 }
 
@@ -36,23 +39,21 @@ impl<'a> From<&'a RawKey> for Aes256Cbc<'a> {
 
 #[cfg(test)]
 mod tests {
-    use crate::hashers::sha3_512::Sha3_512;
-    use super::Aes256Cbc;
+    use crate::ciphers::aes_256::Aes256Cbc;
     use crate::ciphers::Cipher;
+    use crate::hashers::sha3_512::Sha3_512;
     use crate::hashers::Hasher;
     use crate::iv::Iv;
     use crate::raw_key::RawKey;
     use hex_literal::hex;
     use std::convert::TryInto;
 
-    type HasherImpl = Sha3_512;
-
     #[test]
     fn is_encrypting_correctly() {
         let iv = Iv {
             iv: hex!("746f74616c6c7972616e646f6d766563"),
         };
-        let key = HasherImpl::make("testkey");
+        let key = Sha3_512::make("testkey");
         let raw_key = RawKey::make(key, iv);
 
         let msg = String::from("123");
@@ -69,7 +70,7 @@ mod tests {
         let iv = Iv {
             iv: hex!("746f74616c6c7972616e646f6d766563"),
         };
-        let key = HasherImpl::make("");
+        let key = Sha3_512::make("");
         let raw_key = RawKey::make(key, iv);
 
         let msg = String::from("123");
@@ -85,12 +86,9 @@ mod tests {
     #[should_panic]
     fn iv_too_small() {
         let iv = Iv {
-            iv: String::from("qwerty")
-                .as_bytes()
-                .try_into()
-                .unwrap(),
+            iv: String::from("qwerty").as_bytes().try_into().unwrap(),
         };
-        let key = HasherImpl::make("testkey");
+        let key = Sha3_512::make("testkey");
         let rawkey = RawKey::make(key, iv);
 
         rawkey.to_cipher::<Aes256Cbc>();
@@ -105,7 +103,7 @@ mod tests {
                 .try_into()
                 .unwrap(),
         };
-        let key = HasherImpl::make("testkey");
+        let key = Sha3_512::make("testkey");
         let rawkey = RawKey::make(key, iv);
 
         rawkey.to_cipher::<Aes256Cbc>();

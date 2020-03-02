@@ -28,9 +28,9 @@ impl RawKey {
 
 #[cfg(test)]
 mod tests {
-    use crate::hashers::sha3_512::Sha3_512;
-    use crate::ciphers::aes_256::Aes256Cbc;
     use super::{Hasher, Iv, RawKey};
+    use crate::ciphers::aes_256::Aes256Cbc;
+    use crate::hashers::sha3_512::Sha3_512;
 
     #[test]
     fn generates_raw_key_correctly() {

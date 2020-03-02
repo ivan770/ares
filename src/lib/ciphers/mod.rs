@@ -1,7 +1,7 @@
 pub mod aes_256;
 
 pub enum Error {
-    DecryptionError
+    DecryptionError,
 }
 
 pub trait Cipher {
