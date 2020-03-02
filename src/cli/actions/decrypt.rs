@@ -1,14 +1,16 @@
 use crate::actions::errors::Error;
 use crate::actions::progress::Progress;
-use crate::crypto::ciphers::Cipher;
-use crate::crypto::iv::Iv;
-use crate::crypto::raw_key::RawKey;
-use crate::encrypted_file::EncryptedFile;
+use crate::Aes;
+use ares::ciphers::Cipher;
+use ares::iv::Iv;
+use ares::raw_key::RawKey;
+use ares::encrypted_file::EncryptedFile;
 use crate::file::{open_file, write_file};
 use crate::help::HELP_MSG;
 use crate::input::Input;
 use bincode::deserialize;
 use hmac::crypto_mac::Mac;
+
 
 fn make_raw_key(iv: Iv) -> Result<RawKey, Error> {
     let raw_key = Input::make_from_cfg()
@@ -29,7 +31,7 @@ fn check_signature(file: &EncryptedFile, raw_key: &RawKey) -> Result<(), Error> 
 
 fn decrypt_file(file: &EncryptedFile, raw_key: RawKey) -> Result<Vec<u8>, Error> {
     let buffer = raw_key
-        .to_cipher()
+        .to_cipher::<Aes>()
         .decrypt(&file.buffer)
         .map_err(|_| Error::InvalidEncryptionKey)?;
 

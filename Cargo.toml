@@ -18,3 +18,11 @@ indicatif = "0.14.0"
 
 [dev-dependencies]
 hex-literal = "0.2.1"
+
+[lib]
+name = "ares"
+path = "src/lib/lib.rs"
+
+[[bin]]
+name = "ares"
+path = "src/cli/main.rs"
