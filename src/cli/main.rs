@@ -8,7 +8,7 @@ mod input;
 use actions::*;
 use clap::{App, Arg};
 
-const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() {
     let matches = App::new("ares")
