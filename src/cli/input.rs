@@ -1,7 +1,7 @@
-use crate::crypto::hashers::Hasher;
-use crate::crypto::iv::Iv;
-use crate::crypto::raw_key::RawKey;
-use crate::crypto::Hasher as HasherImpl;
+use crate::Hasher as HasherImpl;
+use ares::hashers::Hasher;
+use ares::iv::Iv;
+use ares::raw_key::RawKey;
 use std::io::Error;
 
 pub struct Input {
@@ -38,7 +38,7 @@ impl Input {
     }
 
     pub fn to_raw_key(&self) -> RawKey {
-        RawKey::from_string(&self.input)
+        RawKey::from_string::<HasherImpl>(&self.input)
     }
 
     pub fn to_raw_key_iv(&self, iv: Iv) -> RawKey {

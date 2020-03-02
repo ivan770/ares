@@ -1,11 +1,12 @@
 use crate::actions::errors::Error;
 use crate::actions::progress::Progress;
-use crate::crypto::ciphers::Cipher;
-use crate::crypto::raw_key::RawKey;
-use crate::encrypted_file::EncryptedFile;
 use crate::file::{open_file, write_file};
 use crate::help::HELP_MSG;
 use crate::input::Input;
+use crate::Aes;
+use ares::ciphers::Cipher;
+use ares::encrypted_file::EncryptedFile;
+use ares::raw_key::RawKey;
 use hmac::crypto_mac::Mac;
 use std::convert::TryInto;
 
@@ -28,7 +29,7 @@ fn process(pb: &Progress, from: &str, to: &str) -> Result<(), Error> {
     let raw_key = make_raw_key()?;
     pb.spawn_thread().apply_styles().start("Encrypting...");
 
-    let buffer = raw_key.to_cipher().encrypt(&file);
+    let buffer = raw_key.to_cipher::<Aes>().encrypt(&file);
     let mac = make_mac_result(&raw_key, &buffer);
 
     let encrypted_file = EncryptedFile {

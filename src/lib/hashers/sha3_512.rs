@@ -1,4 +1,4 @@
-use crate::crypto::hashers::{Hash, Hasher};
+use crate::hashers::{Hash, Hasher};
 use sha3::Digest;
 use std::convert::TryInto;
 
@@ -17,8 +17,8 @@ impl Hasher for Sha3_512 {
 
 #[cfg(test)]
 mod tests {
-    use super::Sha3_512;
-    use crate::crypto::hashers::Hasher;
+    use crate::hashers::sha3_512::Sha3_512;
+    use crate::hashers::Hasher;
     use hex_literal::hex;
 
     #[test]

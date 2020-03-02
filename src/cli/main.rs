@@ -1,8 +1,6 @@
 extern crate block_modes;
 
 mod actions;
-mod crypto;
-mod encrypted_file;
 mod file;
 mod help;
 mod input;

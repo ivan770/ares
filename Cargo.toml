@@ -9,12 +9,22 @@ aes-soft = "0.3.3"
 block-modes = "0.3.3"
 rand = "0.7.3"
 serde = { version = "1.0", features = ["derive"] }
-bincode = "1.2.1"
-clap = { git = "https://github.com/clap-rs/clap/" }
-dialoguer = "0.5.0"
 sha3 = "0.8.2"
 hmac = "0.7.1"
+# bin dependencies
 indicatif = "0.14.0"
+dialoguer = "0.5.0"
+clap = { git = "https://github.com/clap-rs/clap/" }
+bincode = "1.2.1"
 
 [dev-dependencies]
+hex = "0.4.2"
 hex-literal = "0.2.1"
+
+[lib]
+name = "ares"
+path = "src/lib/lib.rs"
+
+[[bin]]
+name = "ares"
+path = "src/cli/main.rs"
