@@ -3,12 +3,11 @@ use crate::actions::progress::Progress;
 use crate::file::{open_file, write_file};
 use crate::help::HELP_MSG;
 use crate::input::Input;
-use crate::Aes;
+use crate::{Aes, Signer};
 use ares::ciphers::Cipher;
 use ares::encrypted_file::EncryptedFile;
 use ares::raw_key::RawKey;
-use hmac::crypto_mac::Mac;
-use std::convert::TryInto;
+use ares::signers::Signer as SignerTrait;
 
 fn make_raw_key() -> Result<RawKey, Error> {
     let raw_key = Input::make_from_cfg()
@@ -19,9 +18,8 @@ fn make_raw_key() -> Result<RawKey, Error> {
 }
 
 fn make_mac_result(raw_key: &RawKey, input: &[u8]) -> [u8; 32] {
-    let mut mac = raw_key.to_mac();
-    mac.input(input);
-    mac.result().code().as_slice().try_into().unwrap()
+    let mac = raw_key.to_mac::<Signer>();
+    mac.sign(input)
 }
 
 fn process(pb: &Progress, from: &str, to: &str) -> Result<(), Error> {

@@ -3,13 +3,13 @@ use crate::actions::progress::Progress;
 use crate::file::{open_file, write_file};
 use crate::help::HELP_MSG;
 use crate::input::Input;
-use crate::Aes;
+use crate::{Aes, Signer};
 use ares::ciphers::Cipher;
 use ares::encrypted_file::EncryptedFile;
 use ares::iv::Iv;
 use ares::raw_key::RawKey;
+use ares::signers::Signer as SignerTrait;
 use bincode::deserialize;
-use hmac::crypto_mac::Mac;
 
 fn make_raw_key(iv: Iv) -> Result<RawKey, Error> {
     let raw_key = Input::make_from_cfg()
@@ -20,11 +20,10 @@ fn make_raw_key(iv: Iv) -> Result<RawKey, Error> {
 }
 
 fn check_signature(file: &EncryptedFile, raw_key: &RawKey) -> Result<(), Error> {
-    let mut mac = raw_key.to_mac();
+    let mac = raw_key.to_mac::<Signer>();
 
-    mac.input(&file.buffer);
     Ok(mac
-        .verify(&file.mac)
+        .verify(&file.buffer, &file.mac)
         .map_err(|_| Error::InvalidEncryptionKey)?)
 }
 
